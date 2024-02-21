@@ -45,6 +45,14 @@ var nette = function () {
 			return result;
 		},
 		requestHandler: function (e) {
+			var preventEl = $(this);
+			if($(this).prop("tagName")=="form"){
+				preventEl = $(this).find("input[type='submit']")
+			}
+			setTimeout(function () {
+		    	preventEl.addClass("preventedClick").prop("disabled", true);
+	      		preventEl.before('<span class="buttonLoading spinner-border spinner-border-sm" role="status"></span>');
+		  	}, 0);
 			var xhr = inner.self.ajax({}, this, e);
 			if (xhr && xhr._returnFalse) { // for IE 8
 				return false;
@@ -443,6 +451,10 @@ $.nette.ext('snippets', {
 	success: function (payload) {
 		if (payload.snippets) {
 			this.updateSnippets(payload.snippets);
+			setTimeout(function () {
+		        $(".preventedClick").removeProp("disabled").removeClass("preventedClick");
+		        $(".buttonLoading").remove();
+			}, 0);
 		}
 	}
 }, {
